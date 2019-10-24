@@ -86,7 +86,7 @@ def ports
     if line =~ /^Port [0-9]*$/
       number = line.delete(':').gsub(/Port /,'')
       lid = ibstat[i+4].lstrip.split(':')[1].lstrip
-      list[number] = lid 
+      list[lid] = number
     end
   end
   return list
@@ -99,7 +99,7 @@ error_counters = true
 
 # run until we get killed by a mother program 
 while true
-  ports.each_pair do |port,lid|
+  ports.each_pair do |lid,port|
     # clean the counters
     trash = read_values(lid,port)
     sleep(1) # accumulate counters for one second
@@ -107,8 +107,6 @@ while true
     data = read_values(lid,port)
     time=`date +%s`.chop
     # post data to the caller program
-    $stdout.puts %Q[PUTVAL #{hostname}/infiniband/ib_octets-port#{port} interval=#{interval} #{time}:#{data[:rbytes]}:#{data[:tbytes]}]
-    $stdout.puts %Q[PUTVAL #{hostname}/infiniband/ib_packets-port#{port} interval=#{interval} #{time}:#{data[:rpkts]}:#{data[:tpkts]}]
     # optionally monitor error counters
     if error_counters
       # SymbolErrors, LinkRecovers, LinkDowned, LinkIntegrityErrors
@@ -121,6 +119,8 @@ while true
       pkg = [data[:vdropped],data[:xmtd]].join(':')
       $stdout.puts %Q[PUTVAL #{hostname}/infiniband/ib_pkgerror-port#{port} interval=#{interval} #{time}:#{pkg}]
     end
+    $stdout.puts %Q[PUTVAL #{hostname}/infiniband/ib_octets-port#{port}-lid#{lid} interval=#{interval} #{time}:#{data[:rbytes]}:#{data[:tbytes]}]
+    $stdout.puts %Q[PUTVAL #{hostname}/infiniband/ib_packets-port#{port}-lid#{lid} interval=#{interval} #{time}:#{data[:rpkts]}:#{data[:tpkts]}]
     # clear output buffer before sleeping
     $stdout.flush
   end
