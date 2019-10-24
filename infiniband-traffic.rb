@@ -74,10 +74,7 @@ interval = ENV.has_key?('COLLECTD_INTERVAL') ? ENV['COLLECTD_INTERVAL'].to_i : 6
 # run until we get killed by a mother program
 while true
   ports.each_pair do |lid,port|
-    # clean the counters
-    trash = read_values(lid,port)
-    sleep(1) # accumulate counters for one second
-    # read the metrics 
+    # read the metrics
     data = read_values(lid,port)
     time=`date +%s`.chop
     # post data to the caller program
