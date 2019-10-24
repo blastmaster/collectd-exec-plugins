@@ -40,13 +40,13 @@ def read_values(lid,port=1)
   # clean all read counters, except of error counts
   `#{command}`.split("\n").each do |line|
     case line
-    when /^RcvPkts/ # received packets
-      data[:rpkts] = value(line) 
-    when /^XmtPkts/ # transmitted packets
+    when /RcvPkts/ # received packets
+      data[:rpkts] = value(line)
+    when /XmitPkts/ # transmitted packets
       data[:tpkts] = value(line)
-    when /^RcvData/ # received bytes
+    when /RcvData/ # received bytes
       data[:rbytes] = value(line) * 4 # result in octets
-    when /^XmtData/ # transmitted bytes
+    when /XmitData/ # transmitted bytes
       data[:tbytes] = value(line) * 4 # result in octets
     when /^SymbolErrors/
       data[:symerr] = value(line)
