@@ -92,7 +92,7 @@ def ports
   return list
 end
 
-hostname = ENV.has_key?('COLLECTD_HOSTNAME') ? ENV['COLLECTD_HOSTNAME'] : 'localhost'
+hostname = ENV.has_key?('HOSTNAME') ? ENV['HOSTNAME'] : 'localhost'
 interval = ENV.has_key?('COLLECTD_INTERVAL') ? ENV['COLLECTD_INTERVAL'].to_i : 60
 
 error_counters = true
